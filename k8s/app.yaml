@@ -24,8 +24,10 @@ spec:
           ports:
             - containerPort: 80
           args:
-            - "-port 8080"
-            - "-show-header true"
+            - "-port"
+            - "80"
+            - "-show-header"
+            - "true"
 ---
 apiVersion: v1
 kind: Service
