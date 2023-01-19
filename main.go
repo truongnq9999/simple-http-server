@@ -60,6 +60,8 @@ func main() {
 		responseBody += "====================end body===================" + "\n"
 		log.Println("===================end body=====================")
 
+		// Write response
+		w.Header().Set("Content-Type", "text/plain")
 		_, err = w.Write([]byte(responseBody))
 		if err != nil {
 			return
