@@ -1,9 +1,5 @@
 name: Run Gradle on PRs
-on:
-  push:
-    paths:
-      - '**'
-      - '!k8s/**'
+on: "push"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +12,12 @@ jobs:
         uses: docker/setup-buildx-action@v2
       - name: Set env
         run: echo "APP_VERSION=$(cat VERSION)" >> $GITHUB_ENV
+      - name: Check code changes
+        id: is-code-changed
+        run: |
+          if [[ $(git diff --name-only  HEAD^ HEAD ':!k8s') ]]; then
+            echo "::set-output name=value::true"
+          fi
       - name: Create k8s yaml
         run: |
           curl -L https://github.com/a8m/envsubst/releases/download/v1.2.0/envsubst-`uname -s`-`uname -m` -o envsubst
@@ -30,6 +32,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build and push
+        if: steps.is-code-changed.value == 'true'
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile
