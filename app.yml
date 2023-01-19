@@ -1,0 +1,58 @@
+# Using same database with pm-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-http-server
+  namespace: publish
+spec:
+  selector:
+    matchLabels:
+      app: simple-http-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: simple-http-server
+    spec:
+      imagePullSecrets:
+        - name: registry.truongnq.com
+      containers:
+        - name: simple-http-server
+          image: registry.truongnq.com/simple-http-server:${APP_VERSION}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          args:
+            - "-port 8080"
+            - "-show-header true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-http-server
+  namespace: publish
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: simple-http-server
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-http-server-ingress
+  namespace: publish
+spec:
+  rules:
+    - host: tools.truongnq.com
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/show-your-request"
+            backend:
+              service:
+                name: simple-http-server
+                port:
+                  number: 80
