@@ -4,7 +4,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -25,7 +24,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		fmt.Printf("REQUEST:\n%s", string(reqDump))
+		log.Printf("REQUEST:\n%s", string(reqDump))
 
 		// Write response
 		w.Header().Set("Content-Type", "text/plain")
