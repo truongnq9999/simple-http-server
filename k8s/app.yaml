@@ -26,8 +26,6 @@ spec:
           args:
             - "-port"
             - "80"
-            - "-show-header"
-            - "true"
 ---
 apiVersion: v1
 kind: Service
